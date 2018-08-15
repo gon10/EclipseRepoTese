@@ -1,0 +1,97 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+using OpenGameListWebApp.Data.E_Customers;
+using OpenGameListWebApp.Data.E_Customer2s;
+using OpenGameListWebApp.Data.E_Customer3s;
+using OpenGameListWebApp.Data.E_Invoices;
+using OpenGameListWebApp.Data.E_Invoice2s;
+
+namespace OpenGameListWebApp.Data
+{
+    public class ApplicationDbContext : DbContext
+    {
+        #region Constructor
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        #endregion Constructor
+
+        #region Methods
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+           	modelBuilder.Entity<E_Customer>().ToTable("E_Customers");
+           	entrei otm1E_Customer2
+           	1 
+           	entrei otm1E_Invoice
+           	2 
+           	endfor vou zerar2
+           	0
+           	endfor zerei0
+           	1
+           	modelBuilder.Entity<E_Customer>().HasMany(a => a.E_InvoicesRP).WithOne(b => b.E_CustomerRP);
+           	2
+           	0
+           	modelBuilder.Entity<E_Customer2>().ToTable("E_Customer2s");
+           	entrei otm1E_Customer2
+           	modelBuilder.Entity<E_Customer2>().HasOne(a => a.E_Invoice2RP).WithMany(b => b.E_Customer2sRP);
+           	1 
+           	entrei otm1E_Invoice
+           	2 
+           	endfor vou zerar2
+           	0
+           	endfor zerei0
+           	1
+           	2
+           	0
+           	modelBuilder.Entity<E_Customer3>().ToTable("E_Customer3s");
+           	entrei otm1E_Customer2
+           	1 
+           	entrei otm1E_Invoice
+           	2 
+           	endfor vou zerar2
+           	0
+           	endfor zerei0
+           	1
+           	2
+           	0
+           	modelBuilder.Entity<E_Invoice>().ToTable("E_Invoices");
+           	entrei otm1E_Customer2
+           	1 
+           	entrei otm1E_Invoice
+           	modelBuilder.Entity<E_Invoice>().HasOne(a => a.E_CustomerRP).WithMany(b => b.E_InvoicesRP);
+           	2 
+           	endfor vou zerar2
+           	0
+           	endfor zerei0
+           	1
+           	2
+           	0
+           	modelBuilder.Entity<E_Invoice2>().ToTable("E_Invoice2s");
+           	entrei otm1E_Customer2
+           	1 
+           	entrei otm1E_Invoice
+           	2 
+           	endfor vou zerar2
+           	0
+           	endfor zerei0
+           	modelBuilder.Entity<E_Invoice2>().HasMany(a => a.E_Customer2sRP).WithOne(b => b.E_Invoice2RP);
+           	1
+           	2
+           	0
+        }
+        #endregion Methods
+        
+        #region Properties
+        public DbSet<E_Customer> E_Customers { get; set; }
+        public DbSet<E_Customer2> E_Customer2s { get; set; }
+        public DbSet<E_Customer3> E_Customer3s { get; set; }
+        public DbSet<E_Invoice> E_Invoices { get; set; }
+        public DbSet<E_Invoice2> E_Invoice2s { get; set; }
+        #endregion Properties
+    }
+}
+

@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+using OpenGameListWebApp.Data.E_Invoices;
+using OpenGameListWebApp.Data.E_Products;
+
+
+				
+namespace OpenGameListWebApp.Data.E_InvoiceLines
+
+{
+    public class E_InvoiceLine
+    {
+        #region Constructor
+        public E_InvoiceLine()
+        {
+
+        }
+        #endregion Constructor
+
+        #region Properties
+		[Key]
+		[Required]
+		public int ID { get; set; }
+		[Required]
+		public int InvoiceID { get; set; }
+		[Required]
+		public int ProductID { get; set; }
+		[Required]
+		public Decimal ValueWithoutVAT { get; set; }
+		[Required]
+		public Decimal ValueWithVAT { get; set; }
+		public String Description { get; set; }
+		#endregion Properties
+		
+		#region Related Properties
+		[ForeignKey("InvoiceID")]
+		public virtual E_Invoice E_InvoiceRP { get; set; }
+		[ForeignKey("ProductID")]
+		public virtual E_Product E_ProductRP { get; set; }
+		
+		
+		#endregion Related Properties
+	
+	}
+
+}

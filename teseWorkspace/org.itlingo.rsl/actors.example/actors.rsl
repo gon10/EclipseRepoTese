@@ -1,0 +1,17 @@
+package-system actors
+system actorspeci : System[
+	name "nameAlias"
+	scope In
+		
+]
+
+actor AU_Operator_Customers : User [
+	name "Operator_Customers"
+	description "Manage Customers" 
+]	
+	
+actor AU_Operator_Products : User [
+	name "AU_Operator_Products" 
+	description "Manage Products"
+
+]

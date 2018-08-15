@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+
+				
+namespace OpenGameListWebApp.Data.E_Customers
+
+{
+    public class E_Customer
+    {
+        #region Constructor
+        public E_Customer()
+        {
+
+        }
+        #endregion Constructor
+
+        #region Properties
+		[Key]
+		[Required]
+		public int ID { get; set; }
+		[Required]
+		public String Name { get; set; }
+		[Required]
+		public String FiscalID { get; set; }
+		public String Description { get; set; }
+		#endregion Properties
+		
+		#region Related Properties
+		
+		
+		#endregion Related Properties
+	
+	}
+
+}

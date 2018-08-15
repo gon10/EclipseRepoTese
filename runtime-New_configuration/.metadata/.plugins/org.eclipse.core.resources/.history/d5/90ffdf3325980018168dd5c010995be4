@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+				
+namespace DAL.Models
+
+{
+    public class E_InvoiceLine : AuditableEntity
+    {
+        public E_InvoiceLine()
+        {
+
+        }
+
+		
+		
+		public int ID { get; set; }
+		[Key, ForeignKey("E_Invoice")]
+		public int E_InvoiceId { get; set; }
+		
+		
+		
+		public int ProductID { get; set; }
+		
+		
+		public Decimal ValueWithoutVAT { get; set; }
+		
+		
+		public Decimal ValueWithVAT { get; set; }
+		public String Description { get; set; }
+		
+		
+		public E_Invoice E_Invoice { get; set; }
+		public E_Product E_Product { get; set; }
+		
+
+		
+		
+	
+	}
+
+}

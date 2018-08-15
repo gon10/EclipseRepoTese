@@ -1,0 +1,379 @@
+/*
+ *  RSLingo's RSL (Requirements Specification Language) Grammar
+ 
+ * Author: Alberto Rodrigues da Silva
+ * Created Date: August/2016
+ * 
+ * History
+ * -------
+ *  
+ * August/2016
+ * V.1.0 Created
+ *
+ * ----
+ * January/2017
+ * RSL v1.1
+ * Review and consolidation of RSL
+ * 
+ * Added <UserStory> rule: As a <actor>, I want <goal> so that  <receive benefit>.
+ * Added Variability Features
+ *
+ * ----
+ * February/2017
+ * RSL v.2.0
+ * Review and consolidation of RSL
+ * Changes to better align names/constructs with Archimate language
+ * 
+ * April/2017
+ * RSL v.4.0
+ * Major changes:
+ * - major changes of business-level's constructs
+ * - writing style: replaced "{...}" by "[...]" to avoid programming languages' style
+ * - package names and package organization simplified
+ * - "project" construct is optional 
+ * - some enumerations updated
+ * 
+ * July/2017
+ * RSL v.4.a
+ * Minor changes:
+ * - QR: replace value (e.g., 4) by expression (e.g.,  >= 4)
+ * - Added DoubleOrInt and Percentage general rules
+ */  
+
+grammar org.rslingo.rsl.Rsl 
+		with org.eclipse.xtext.common.Terminals 
+
+generate rsl "http://www.rslingo.org/rsl/Rsl"
+
+
+Model: (packages+= PackageAbstract)*;
+	
+PackageAbstract: PackageSystem;
+
+/********************************************************************************
+ * Names and Import Rule(s)
+*********************************************************************************/
+
+QualifiedName:
+  	ID ('.' ID)*;
+
+QualifiedNameWithWildcard:
+  	QualifiedName '.*'?;
+  	
+Import:
+	'import' importedNamespace=QualifiedNameWithWildcard;
+
+/********************************************************************************
+ * General Rule(s)
+*********************************************************************************/
+
+terminal DOUBLE: INT '.' INT;
+
+DoubleOrInt: DOUBLE | INT;
+
+Percentage hidden(): DoubleOrInt '%';
+
+Date: day=INT '-' month=Month '-' year=INT;
+
+Month: value=('Jan'|'Feb'|'Mar'|'Apr'|'May'|'Jun'|'Jul'|'Aug'|'Sep'|'Oct'|'Nov'|'Dec');
+
+	
+/********************************************************************************
+ * Packages Rule(s)
+*********************************************************************************/
+
+PackageSystem:
+	'package-system' name=QualifiedName
+		imports+=Import*
+
+		system=System
+		
+		// Key system elements
+		entities+=DataEntity*
+		dataEntityViews+=DataEntityView* 
+		actors+=Actor* 
+		requirements+=Requirement*
+		stateMachine+= StateMachine*
+
+		// if need for specification of requirement relations
+		requirementRelations+=RequirementRelation*
+	;
+
+
+
+
+	
+/********************************************************************************
+ * System-related Rule(s)
+*********************************************************************************/
+System:
+	'system' name=ID ':' type=SystemType '['
+		('name' nameAlias=STRING)
+		'scope' scope=SystemScope ?
+		//('partOf' partOf=[System])?
+		('subSystems' subSystems=RefSystem)?
+		('reusableSystems' reusableSystems=RefSystem)?
+		('description' description=STRING)?
+	']';
+
+enum SystemType: System | SubSystem | ReusableSystem | Application | Other;
+enum SystemScope: In | Out;
+
+RefSystem: refs+=[System](',' refs+=[System])*;
+	
+SystemRelation:
+	'systemRelation' name=ID ':' type=SystemRelationType '['
+		'source' source=[System]
+		'target' target=[System]
+		'category' category=SystemRelationCategory
+		('description' description=STRING)?
+	']';
+
+enum SystemRelationType: Requires | Supports | Obstructs | Conflicts | Identical | Relates | Other;
+enum SystemRelationCategory: Import | Export | ImportExport | Sync | Interact | Other;
+
+
+/********************************************************************************
+ * System-related Rule(s): DataEntity and BusinessEntities
+*********************************************************************************/
+
+/********************************************************************************/
+DataEntity:  
+	'dataEntity' name=ID ':' type=DataEntityType (':' subType=DataEntitySubType)?'['
+		('name' nameAlias=STRING)
+		('isA' super=[DataEntity])?
+		(attributes+=Attribute)+
+		(primaryKey=PrimaryKey)?
+		(foreignKeys+=ForeignKey)*
+		(checks+=Check)*
+		('description' description=STRING)?
+	']';
+
+/*
+ * Most entities are typed as Principal, and a few of them as Secondary, 
+ * e.g. Invoice is Principal, and Invoice_Line is Secondary.
+ * 
+ * In addition,  an entity can by sub-typed as Simple (if they have simple structure, e.g. few attributes) 
+ * or Complex otherwise.
+ */
+enum DataEntityType: Principal|Secondary;
+enum DataEntitySubType:	Simple|Complex;
+
+
+/********************************************************************************/
+Attribute:
+	'attribute' name=ID ':' type=AttributeType ('(' size = DoubleOrInt ')')? '['
+		('name' nameAlias=STRING)
+		('multiplicity' multiplicity=Multiplicity)? 
+		('defaultValue' defaultValue=STRING)? 
+		('values' values=STRING)? 
+		(notNull='NotNull')? 
+		(unique='Unique')? 
+		('description' description=STRING)?
+	']';
+
+enum AttributeType:
+	Integer|Double|Decimal|Boolean|Bit|Currency|Date|Time|Datetime|String|Text|Regex|URL|Image|XML|Binary;
+	
+Multiplicity: value=('"0"' | '"1"' | '"0..1"' | '"*"' | STRING);
+
+PrimaryKey:
+	'primaryKey' '(' refTo=RefAttribute ')';
+
+ForeignKey:
+	'foreignKey' fentity=[DataEntity] '(' refTo=RefAttribute ')';
+
+RefAttribute:
+	refAttr+=[Attribute](',' refAttr+=[Attribute])* ;
+
+Check:
+	'check' name=ID checkExpression=STRING;
+
+/********************************************************************************/
+DataEntityView:  
+	'dataEntityView' name=ID ':' type=DataEntityViewType '['
+		('name' nameAlias=STRING)
+		(master=MasterDEntity)
+		(details+=DetailDEntity)*
+		(references+=ReferenceDEntity)*
+		('description' description=STRING)?
+	']';
+
+enum DataEntityViewType: VerySimple | Simple | Complex;
+
+MasterDEntity:
+	'master' masterDEntity= [DataEntity];
+	
+DetailDEntity:
+	'detail' dEntityDetail= [DataEntity] ('[' 'reference' refDEntity=RefDEntity ']')?;
+	
+ReferenceDEntity:
+	'reference' refDEntity= RefDEntity;
+
+RefDEntity:
+	refDEntity+=[DataEntity] (',' refDEntity+=[DataEntity])* ;
+
+
+/********************************************************************************
+ * System-related Rule(s): Actors
+*********************************************************************************/
+Actor:
+'actor' name=ID ':' type=ActorType '['
+	('name' nameAlias=STRING)
+	('isA' super=[Actor])?
+	('description' description=STRING)?
+']';
+
+enum ActorType:	User | ExternalSystem | Timer;
+	
+/*******************************************************************************
+ * System-related Rule(s): Requirements: BusinessGoal | SystemGoal | FR | QR | Constraint | UserStory | UseCase
+********************************************************************************/
+
+Requirement:
+	SystemRequirement;
+
+
+SystemRequirement:
+	UseCase;
+
+// PriorityType based on the  MoSCoW method 
+enum PriorityType: Must | Should | Could | WillNot;
+ 	
+RequirementRelation:
+	'requirementRelation' name=ID ':' type=RequirementRelationType '['
+		'source' source=[Requirement]
+		'target' target=[Requirement]
+		('description' description=STRING)?
+	']';
+
+enum RequirementRelationType: Requires | Supports | Obstructs | Conflicts | Identical | Relates | Other;
+
+//*******************************************************************************	
+
+//*******************************************************************************
+UseCase:
+	'useCase' name=ID ':' type=UseCaseType '['
+		('name' nameAlias=STRING)
+		('actorInitiates' actorInitiates=[Actor])
+		('actorParticipates' actorParticipates+=RefActor)?
+		('dataEntityView' dEntityView=[DataEntityView])?
+
+		('precondition' precondition=STRING)?
+		('postcondition' postcondition=STRING)?
+		
+		(actions= UCActions)?
+		(extensionPoints= UCExtensionPoints)?
+				
+		(includes= UCIncludes)?
+		(extends+= UCExtends)*
+
+		('priority' priority=PriorityType)?
+		('description' description=STRING)?
+		
+		scenarios+=Scenario*
+	']';
+
+enum UseCaseType:
+	EntityCreate | EntityRead | EntityUpdate | EntityDelete | EntityReport | EntityDashboard | EntityOther | 
+	EntitiesManage | EntitiesBrowse | EntitiesSearch | EntitiesReport | EntitiesDashboard | 
+	EntitiesInteropImport | EntitiesInteropExport | EntitiesInteropSync | EntitiesInteropSendMessage | EntitiesInteropServiceInvocation | 
+	EntitiesMapShow | EntitiesMapInteract | EntitiesOther  | 
+	Other;
+
+	
+RefActor:
+	refs+=[Actor](',' refs+=[Actor])*;
+
+UCActions: 
+	'actions' actions+= UCAction (',' actions+=UCAction)*;
+	
+UCAction: 
+	name=ID ('[' 'description' description=STRING ']' )?;
+
+UCIncludes:
+	'includes' includes+=RefUC;	
+	
+UCExtends:
+	'extends' usecase=[UseCase] 'onExtensionPoint' extensionPoint=[UCExtensionPoint | QualifiedName];	
+	
+UCExtensionPoints:
+	'extensionPoints' extensionPoints+= UCExtensionPoint (',' extensionPoints+=UCExtensionPoint)*;
+	
+UCExtensionPoint: 
+	name=ID ('[' 'description' description=STRING ']' )?;
+
+RefUC:
+	refs+=[UseCase](',' refs+=[UseCase])*;
+	
+
+Scenario:
+	'scenario' name=ID ':' type=ScenarioType '['
+		('name' nameAlias=STRING)
+		('executionMode' mode=('Sequential'|'Parallel'))?
+		('description' description=STRING)?
+		steps+=Step*
+	']';
+
+Step:
+	'step' name=ID ':' type=StepOperationType (':' subType=StepOperationSubType )?'['
+		(simpleStep= SimpleStep | subSteps+= Step+ | ifSteps+= IfStep* )
+	']';
+
+SimpleStep:
+	(nameAlias=STRING)
+	('actor' actor=[Actor])?
+	('description' description=STRING)?
+	('precondition' precondition=STRING)?
+	('postcondition' postcondition=STRING)?
+	('nextStep' next=[Step])?;
+
+IfStep:
+	('ifAction' action=[UCAction | QualifiedName]) '['
+		steps+= Step+
+	']';
+	
+	
+enum ScenarioType:	Main | Alternative | Exception;
+
+enum StepOperationType:	Actor_PrepareData | Actor_CallSystem | System_Executes | System_ReturnResult | Other | None ;
+
+enum StepOperationSubType:	SubmitData | ShowData | CancelUseCase | TerminateUseCase | Other;
+
+
+/********************************************************
+   Entities' State Machines
+*********************************************************/
+
+StateMachine:
+	'stateMachine' name=ID ':' type=StateMachineType '['
+		'name' nameAlias=STRING
+		'dataEntity' entity= [DataEntity]
+		('description' description=STRING)?
+		states= States
+	']';
+
+States:
+	{State} states += State*;
+	
+State:
+	'state' name=ID 
+	(isInitial ?= 'isInitial')? 
+	(isFinal ?= 'isFinal')? 
+	('onEntry' onEntry= STRING)?
+	('onExit' onExit= STRING)?
+	(':' (actions+= RefUCAction))? (actions+= RefUCAction)*
+	;
+
+		
+enum StateMachineType: Simple | Complex;
+
+RefUCAction:
+	(
+	  //'useCase' useCase=[UseCase]  'action' action= [UCAction | QualifiedName] 
+	  'useCaseAction' action= [UCAction | QualifiedName]
+	  ('nextState' nextstate= [State])?
+	);
+
+
+

@@ -1,0 +1,65 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+				
+namespace DAL.Models
+
+{
+    public class E_Invoice : AuditableEntity
+    {
+        public E_Invoice()
+        {
+
+        }
+
+		false
+		
+		
+		public int ID { get; set; }
+		false
+		
+		
+		public int CustomerID { get; set; }
+		false
+		
+		
+		public DateTime DateCreation { get; set; }
+		false
+		
+		
+		public DateTime DateApproval { get; set; }
+		false
+		
+		
+		public DateTime DatePaid { get; set; }
+		false
+		
+		
+		public DateTime DateDeleted { get; set; }
+		false
+		
+		
+		public Boolean IsApproved { get; set; }
+		false
+		
+		
+		public Decimal TotalValueWithoutVAT { get; set; }
+		false
+		
+		
+		public Decimal TotalValueWithVAT { get; set; }
+		public String Description { get; set; }
+		
+		
+		[ForeignKey("CustomerID")]
+		public virtual E_Customer E_CustomerRP { get; set; }
+		
+		public virtual List<E_Customer> E_CustomersRP { get; set; }
+		
+	
+	}
+
+}

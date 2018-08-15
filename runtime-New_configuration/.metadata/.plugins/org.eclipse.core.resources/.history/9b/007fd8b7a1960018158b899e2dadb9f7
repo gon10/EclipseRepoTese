@@ -1,0 +1,99 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+using OpenGameListWebApp.Data.E_VATs;
+using OpenGameListWebApp.Data.E_Products;
+using OpenGameListWebApp.Data.E_Customers;
+using OpenGameListWebApp.Data.E_CustomerVIPs;
+using OpenGameListWebApp.Data.E_Invoices;
+using OpenGameListWebApp.Data.E_InvoiceLines;
+using OpenGameListWebApp.Data.E_VATs;
+using OpenGameListWebApp.Data.E_Products;
+using OpenGameListWebApp.Data.E_Customers;
+using OpenGameListWebApp.Data.E_CustomerVIPs;
+using OpenGameListWebApp.Data.E_Invoices;
+using OpenGameListWebApp.Data.E_InvoiceLines;
+
+namespace OpenGameListWebApp.Data
+{
+    public class ApplicationDbContext : DbContext
+    {
+        #region Constructor
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        #endregion Constructor
+
+        #region Methods
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+           	modelBuilder.Entity<E_VAT>().ToTable("E_VATs");
+           	modelBuilder.Entity<E_VAT>().HasOne(a => a.E_ProductRP).WithMany(b => b.E_VATsRP);
+           	
+           	
+           	modelBuilder.Entity<E_Product>().ToTable("E_Products");
+           	modelBuilder.Entity<E_Product>().HasMany(a => a.E_VATsRP).WithOne(b => b.E_ProductRP);
+           	
+           	
+           	modelBuilder.Entity<E_Customer>().ToTable("E_Customers");
+           	modelBuilder.Entity<E_Customer>().HasOne(a => a.E_InvoiceRP).WithMany(b => b.E_CustomersRP);
+           	
+           	
+           	modelBuilder.Entity<E_CustomerVIP>().ToTable("E_CustomerVIPs");
+           	
+           	
+           	modelBuilder.Entity<E_Invoice>().ToTable("E_Invoices");
+           	modelBuilder.Entity<E_Invoice>().HasMany(a => a.E_CustomersRP).WithOne(b => b.E_InvoiceRP);
+           	
+           	modelBuilder.Entity<E_Invoice>().HasOne(a => a.E_InvoiceLineRP).WithOne(b => b.E_InvoiceRP);
+           	
+           	modelBuilder.Entity<E_InvoiceLine>().ToTable("E_InvoiceLines");
+           	
+           	modelBuilder.Entity<E_InvoiceLine>().HasOne(a => a.E_InvoiceRP).WithOne(b => b.E_InvoiceLineRP);
+           	
+           	modelBuilder.Entity<E_VAT>().ToTable("E_VATs");
+           	modelBuilder.Entity<E_VAT>().HasOne(a => a.E_ProductRP).WithMany(b => b.E_VATsRP);
+           	
+           	
+           	modelBuilder.Entity<E_Product>().ToTable("E_Products");
+           	modelBuilder.Entity<E_Product>().HasMany(a => a.E_VATsRP).WithOne(b => b.E_ProductRP);
+           	
+           	
+           	modelBuilder.Entity<E_Customer>().ToTable("E_Customers");
+           	modelBuilder.Entity<E_Customer>().HasOne(a => a.E_InvoiceRP).WithMany(b => b.E_CustomersRP);
+           	
+           	
+           	modelBuilder.Entity<E_CustomerVIP>().ToTable("E_CustomerVIPs");
+           	
+           	
+           	modelBuilder.Entity<E_Invoice>().ToTable("E_Invoices");
+           	modelBuilder.Entity<E_Invoice>().HasMany(a => a.E_CustomersRP).WithOne(b => b.E_InvoiceRP);
+           	
+           	modelBuilder.Entity<E_Invoice>().HasOne(a => a.E_InvoiceLineRP).WithOne(b => b.E_InvoiceRP);
+           	
+           	modelBuilder.Entity<E_InvoiceLine>().ToTable("E_InvoiceLines");
+           	
+           	modelBuilder.Entity<E_InvoiceLine>().HasOne(a => a.E_InvoiceRP).WithOne(b => b.E_InvoiceLineRP);
+           	
+        }
+        #endregion Methods
+        
+        #region Properties
+        public DbSet<E_VAT> E_VATs { get; set; }
+        public DbSet<E_Product> E_Products { get; set; }
+        public DbSet<E_Customer> E_Customers { get; set; }
+        public DbSet<E_CustomerVIP> E_CustomerVIPs { get; set; }
+        public DbSet<E_Invoice> E_Invoices { get; set; }
+        public DbSet<E_InvoiceLine> E_InvoiceLines { get; set; }
+        public DbSet<E_VAT> E_VATs { get; set; }
+        public DbSet<E_Product> E_Products { get; set; }
+        public DbSet<E_Customer> E_Customers { get; set; }
+        public DbSet<E_CustomerVIP> E_CustomerVIPs { get; set; }
+        public DbSet<E_Invoice> E_Invoices { get; set; }
+        public DbSet<E_InvoiceLine> E_InvoiceLines { get; set; }
+        #endregion Properties
+    }
+}

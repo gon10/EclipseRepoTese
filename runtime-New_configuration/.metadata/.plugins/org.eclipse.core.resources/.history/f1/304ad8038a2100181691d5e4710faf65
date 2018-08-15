@@ -1,0 +1,41 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+using OpenGameListWebApp.Data.E_Invoice2
+
+				
+namespace OpenGameListWebApp.Data.E_Customers;
+
+{
+    public class E_Customer
+    {
+        #region Constructor
+        public E_Customer()
+        {
+
+        }
+        #endregion Constructor
+
+        #region Properties
+		[Key]
+		[Required]
+		public int ID { get; set; }
+		[Required]
+		public int InvoiceID { get; set; }
+		[Required]
+		public String Name { get; set; }
+		[Required]
+		public String FiscalID { get; set; }
+		public String Description { get; set; }
+		#endregion Properties
+		
+		#region Related Properties
+		[ForeignKey("InvoiceID")]
+		public virtual E_Invoice2 InvoiceIDRP { get; set; }
+		#endregion Related Properties
+	
+	}
+
+}

@@ -1,0 +1,40 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+				
+namespace DAL.Models
+
+{
+    public class E_InvoiceLine : AuditableEntity
+    {
+        public E_InvoiceLine()
+        {
+
+        }
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		public String Description { get; set; }
+		
+		
+		[ForeignKey("InvoiceID")]
+		public virtual E_Invoice E_InvoiceRP { get; set; }
+		[ForeignKey("ProductID")]
+		public virtual E_Product E_ProductRP { get; set; }
+		
+		
+	
+	}
+
+}

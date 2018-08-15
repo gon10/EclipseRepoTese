@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpenGameListWebApp.Data.E_Invoice
+
+{
+    public class E_Invoice
+    {
+        #region Constructor
+        public E_Invoice()
+        {
+
+        }
+        #endregion Constructor
+
+        #region Properties
+        public int ID 
+        public double org.rslingo.rsl.rsl.impl.AttributeImpl@3b168a (name: ID, type: Integer, size: null, nameAlias: Invoice ID, defaultValue: null, values: null, notNull: NotNull, unique: Unique, description: null)
+		[Key]
+		[Required]
+		public Integer ID { get; set; }
+		[Required]
+		public Integer customerID { get; set; }
+		[Required]
+		public Date dateCreation { get; set; }
+		[Required]
+		public Date dateApproval { get; set; }
+		[Required]
+		public Boolean isApproved { get; set; }
+		[Required]
+		public Decimal totalValueWithoutVAT { get; set; }
+		[Required]
+		public Decimal totalValueWithVAT { get; set; }
+		public String description { get; set; }
+		#endregion Properties
+		
+		#region Related Properties
+		[ForeignKey("org.rslingo.rsl.rsl.impl.RefAttributeImpl@89485b")]
+		public virtual org.rslingo.rsl.rsl.impl.DataEntityImpl@1ee0b69 (name: E_Customer, type: Principal, subType: Simple, nameAlias: Customer, description: Customers description) org.rslingo.rsl.rsl.impl.RefAttributeImpl@89485b { get; set; }
+		#endregion Related Properties
+	
+	}
+
+}

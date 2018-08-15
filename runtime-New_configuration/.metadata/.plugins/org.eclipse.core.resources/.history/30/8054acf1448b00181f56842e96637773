@@ -1,0 +1,35 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+using OpenGameListWebApp.Data.E_Customers;
+using OpenGameListWebApp.Data.E_Invoices;
+
+namespace OpenGameListWebApp.Data
+{
+    public class ApplicationDbContext : DbContext
+    {
+        #region Constructor
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        #endregion Constructor
+
+        #region Methods
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+           	modelBuilder.Entity<E_Customer>().ToTable("E_Customers");
+           	modelBuilder.Entity<E_Customer>().HasMany(a => a.E_InvoicesRP).WithOne(b => b.E_CustomerRP);
+           	modelBuilder.Entity<E_Invoice>().ToTable("E_Invoices");
+           	modelBuilder.Entity<E_Invoice>().HasOne(a => a.E_CustomerRP).WithMany(b => b.E_InvoicesRP);
+        }
+        #endregion Methods
+        
+        #region Properties
+        public DbSet<E_Customer> E_Customers { get; set; }
+        public DbSet<E_Invoice> E_Invoices { get; set; }
+        #endregion Properties
+    }
+}

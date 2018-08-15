@@ -1,0 +1,194 @@
+package-system billingsystem.subsystems
+	
+import billingsystem.glossary.*
+import billingsystem.stakeholders.*
+
+import billingsystem.subsystems.*
+import billingsystem.reusesystems.*
+
+
+/********************************************************
+   System definition 
+*********************************************************/
+system 	S_subsystem_A_2 : SubSystem [ 
+	name "BillingSystem-Invoices"	
+	scope In
+]
+
+dataEntity E_VAT : Principal [
+	name "VAT"   
+    attribute VATCode: Integer [name "VAT Code" NotNull Unique]
+    attribute VATName: String(30) [name "VAT Class Name" NotNull]
+    attribute VATValue: Decimal(2.2) [name "VAT Class Value " NotNull]
+	primaryKey (VATCode)
+	description "VAT Class"
+    ]
+
+dataEntity E_Product : Principal [
+	name "Product"   
+    attribute ID: Integer [name "Product ID" NotNull Unique]
+    attribute Name: String(50) [name "Name" multiplicity "1..2" description "Product Name"]
+    attribute valueWithoutVAT: Decimal(16.2) [name "Price Without VAT" NotNull ]
+    attribute valueWithVAT: Decimal(16.2) [name "Price With VAT" NotNull ]
+    attribute VATClassCode : Integer [name "VAT Code" NotNull]
+    attribute VATClassValue : Decimal(2.2) [name "VAT Class Value " NotNull]
+	primaryKey (ID)
+	foreignKey E_VAT(VATClassCode)
+	description "Products"
+    ]
+
+dataEntity E_Customer : Principal [
+	name "Customer" 
+    attribute ID: Integer [name "Customer ID" NotNull Unique]
+    attribute Name: String(50) [name "Customer Name" NotNull Unique]
+    attribute FiscalID: String(12) [name "Fiscal ID" NotNull Unique]
+	primaryKey (ID)
+	check CK_Customer1 "ValidFiscalID(FiscalID)"
+	description "Customers" 
+    ]
+    
+    dataEntity E_CustomerAdress : Principal [
+	name "Address" 
+    attribute ID: Integer [name "Customer ID" NotNull Unique]
+    attribute Address: String(50) [name "Address Name" NotNull Unique]
+    attribute CustomerId: String(50) [name "Customer Id" NotNull Unique]    
+    attribute FiscalID: String(12) [name "Fiscal ID" NotNull Unique]
+	primaryKey (ID)
+	foreignKey E_Customer(CustomerId)
+	check CK_CustomerId "Unique(CustomerId)"
+	description "Customers" 
+    ]
+
+dataEntity E_CustomerVIP : Principal [
+	name "CustomerVIP" 
+	isA E_Customer
+    attribute ID: Integer [name "Customer ID" NotNull Unique]
+    attribute Phone: String(12) [name "Phone #" NotNull Unique]
+	primaryKey (ID)
+	description "Customers VIP" 
+    ]
+
+dataEntity E_Invoice : Principal [
+	name "Invoice1"   
+    attribute ID: Integer [name "Invoice ID" NotNull Unique]
+    attribute customerID: Integer [name "Customer ID" NotNull]
+    attribute dateCreation: Date [name "Creation Date"  defaultValue "today()" NotNull]
+    attribute dateApproval: Date [name "Approval Date"]
+    attribute datePaid: Date [name "Payment Date" ]
+    attribute dateDeleted: Date [name "Delete Date"]
+    attribute isApproved: Boolean [name "Approved?" defaultValue "False"]
+    attribute totalValueWithoutVAT: Decimal(16.2) [name "Total Value Without VAT" NotNull ]
+    attribute totalValueWithVAT: Decimal(16.2) [name "Total Value With VAT" NotNull ]
+	primaryKey (ID)
+	foreignKey E_Customer(customerID)
+	description "Invoices"
+    ]
+
+dataEntity E_InvoiceLine: Secondary  [
+	name "InvoiceLine" 
+    attribute ID: Integer [name "Invoice ID" NotNull Unique]
+    attribute invoiceID: Integer [name "Invoice ID" NotNull]
+    attribute productID: Integer [name "Product ID" NotNull]
+    attribute valueWithoutVAT: Decimal [name "Value Without VAT" ]
+    attribute valueWithVAT: Decimal [name "Value With VAT"]
+	primaryKey (ID)
+	foreignKey E_Invoice(invoiceID) 
+	foreignKey E_Product(productID) 
+//	check CK_InvoiceLine1 "Unique(invoiceID+order)"
+	description "InvoiceLines"  
+    ]
+    
+    
+    
+    
+    dataEntityView BE_VAT: VerySimple [name "BE_VAT" master E_VAT description "BE VAT"]
+    
+	dataEntityView BE_Product: Simple [name "BE_Product"  master E_Product reference E_VAT description "BE Product" ]
+	
+	dataEntityView BE_Customer: Simple  [name "BE_Customer"  master E_Customer]
+	
+	dataEntityView BE_Invoice_Simple: Simple  [name "BE_Invoice_Simple"  master E_Invoice reference E_Customer]
+	
+	dataEntityView BE_Invoice_Complex: Complex  [
+	name "BE_Invoice_Complex"
+	master E_Invoice
+    detail E_InvoiceLine [reference E_Product, E_VAT]
+	reference E_Customer
+	]
+	
+	
+	actor AU_Operator_Customers : User [name "Operator_Customers" description "Manage Customers" ]
+	actor AU_Operator_Products : User [name "AU_Operator_Products" description "Manage Products"]
+	actor AU_Operator : User [name "Operator" isA AU_Operator_Customers description "Manage Invoices and Customers" ]
+	actor AU_Manager : User [name "Manager" description "Approve Invoices"]
+	actor AU_TechnicalAdmin : User [name "TechnicalAdmin" description "Manage Users, VAT, ... Configure" ]
+	actor AS_ERP_Accounting : ExternalSystem [name "ERP_Accounting" description "Receive info with approved invoices"]
+	actor AT_NotifyManager : Timer [name "TimerNotifyManager" description "Notify Manager with Invoices to approve"]
+	
+	
+	
+	useCase UC_1_Manage_Invoices: EntitiesManage [
+	name "Manage Invoices"
+	actorInitiates AU_Manager 
+	dataEntityView BE_Invoice_Complex 
+	precondition "Conditions that need to be satisfied before executing this Use Case."
+	postcondition "Conditions that need to be satisfied after the execution of the Use Case."
+	actions Close, Search, Filter, Create, Read, Update, Send, Export_Invoices, Print_Invoice, Print_Invoices
+	extensionPoints EPCreate, EPRead, EPUpdate, EPDelete, EPSend, EPExport_Invoices, EPPrint_Invoice, EPPrint_Invoices
+	
+	priority Must //High
+	description "Manage Invoices"
+	]
+
+useCase UC_1_1_Create_Invoice: EntityCreate [
+	name "Create Invoice"
+	actorInitiates AU_Manager
+	dataEntityView BE_Invoice_Simple 
+	actions Create, Cancel
+	extensionPoints EP_JustForTest
+	extends UC_1_Manage_Invoices onExtensionPoint UC_1_Manage_Invoices.EPCreate 
+	
+	priority Must //High
+	description "Create Invoice"
+]
+
+useCase UC_1_2_Update_Invoice: EntityUpdate [
+	name "Update Invoice"
+	actorInitiates AU_Manager
+	dataEntityView BE_Invoice_Simple 
+	actions Update, ReSubmit2Approval, Cancel
+	extends UC_1_Manage_Invoices onExtensionPoint UC_1_Manage_Invoices.EPUpdate
+]
+
+useCase UC_1_4_Print_InvoiceReceipt_Report: EntityReport [
+	name "Print_InvoiceReceipt_Report"
+	actorInitiates AU_Manager
+	dataEntityView BE_Invoice_Simple 
+	actions Print, Cancel
+	extends UC_1_Manage_Invoices onExtensionPoint UC_1_Manage_Invoices.EPPrint_Invoice
+]
+
+useCase UC_1_6_Export_Invoices: EntitiesInteropExport [
+	name "Export_Invoices"
+	actorInitiates AU_Manager
+	dataEntityView BE_Invoice_Simple 
+	actions ExportInvoices, Cancel
+	extends UC_1_Manage_Invoices onExtensionPoint UC_1_Manage_Invoices.EPExport_Invoices
+]
+
+useCase UC_1_8_Delete_Invoice: EntityDelete [
+	name "Delete_Invoice(s)"
+	actorInitiates AU_Manager
+	dataEntityView BE_Invoice_Simple 
+	actions Delete, Cancel
+	extends UC_1_Manage_Invoices onExtensionPoint UC_1_Manage_Invoices.EPDelete
+]
+
+
+
+
+
+
+
+
+

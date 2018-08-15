@@ -1,0 +1,73 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+using OpenGameListWebApp.Data.E_Customers;
+using OpenGameListWebApp.Data.E_Invoices;
+using OpenGameListWebApp.Data.E_prodDependeDeDoiss;
+using OpenGameListWebApp.Data.E_metade1s;
+using OpenGameListWebApp.Data.E_metade2s;
+using OpenGameListWebApp.Data.E_Customers;
+using OpenGameListWebApp.Data.E_Invoices;
+using OpenGameListWebApp.Data.E_prodDependeDeDoiss;
+using OpenGameListWebApp.Data.E_metade1s;
+using OpenGameListWebApp.Data.E_metade2s;
+
+namespace OpenGameListWebApp.Data
+{
+    public class ApplicationDbContext : DbContext
+    {
+        #region Constructor
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        #endregion Constructor
+
+        #region Methods
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+           	modelBuilder.Entity<E_Customer>().ToTable("E_Customers");
+           	modelBuilder.Entity<E_Customer>().HasOne(a => a.E_InvoiceRP).WithMany(b => b.E_CustomersRP);
+           	modelBuilder.Entity<E_Customer>().HasOne(a => a.E_prodDependeDeDoisRP).WithMany(b => b.E_CustomersRP);
+           	modelBuilder.Entity<E_Invoice>().ToTable("E_Invoices");
+           	modelBuilder.Entity<E_Invoice>().HasOne(a => a.E_prodDependeDeDoisRP).WithMany(b => b.E_InvoicesRP);
+           	modelBuilder.Entity<E_Invoice>().HasMany(a => a.E_CustomersRP).WithOne(b => b.E_InvoiceRP);
+           	modelBuilder.Entity<E_prodDependeDeDois>().ToTable("E_prodDependeDeDoiss");
+           	modelBuilder.Entity<E_prodDependeDeDois>().HasMany(a => a.E_CustomersRP).WithOne(b => b.E_prodDependeDeDoisRP);
+           	modelBuilder.Entity<E_prodDependeDeDois>().HasMany(a => a.E_InvoicesRP).WithOne(b => b.E_prodDependeDeDoisRP);
+           	modelBuilder.Entity<E_metade1>().ToTable("E_metade1s");
+           	modelBuilder.Entity<E_metade1>().HasOne(a => a.E_metade2RP).WithOne(b => b.E_metade1RP);
+           	modelBuilder.Entity<E_metade2>().ToTable("E_metade2s");
+           	modelBuilder.Entity<E_metade2>().HasOne(a => a.E_metade1RP).WithOne(b => b.E_metade2RP);
+           	modelBuilder.Entity<E_Customer>().ToTable("E_Customers");
+           	modelBuilder.Entity<E_Customer>().HasOne(a => a.E_InvoiceRP).WithMany(b => b.E_CustomersRP);
+           	modelBuilder.Entity<E_Customer>().HasOne(a => a.E_prodDependeDeDoisRP).WithMany(b => b.E_CustomersRP);
+           	modelBuilder.Entity<E_Invoice>().ToTable("E_Invoices");
+           	modelBuilder.Entity<E_Invoice>().HasOne(a => a.E_prodDependeDeDoisRP).WithMany(b => b.E_InvoicesRP);
+           	modelBuilder.Entity<E_Invoice>().HasMany(a => a.E_CustomersRP).WithOne(b => b.E_InvoiceRP);
+           	modelBuilder.Entity<E_prodDependeDeDois>().ToTable("E_prodDependeDeDoiss");
+           	modelBuilder.Entity<E_prodDependeDeDois>().HasMany(a => a.E_CustomersRP).WithOne(b => b.E_prodDependeDeDoisRP);
+           	modelBuilder.Entity<E_prodDependeDeDois>().HasMany(a => a.E_InvoicesRP).WithOne(b => b.E_prodDependeDeDoisRP);
+           	modelBuilder.Entity<E_metade1>().ToTable("E_metade1s");
+           	modelBuilder.Entity<E_metade1>().HasOne(a => a.E_metade2RP).WithOne(b => b.E_metade1RP);
+           	modelBuilder.Entity<E_metade2>().ToTable("E_metade2s");
+           	modelBuilder.Entity<E_metade2>().HasOne(a => a.E_metade1RP).WithOne(b => b.E_metade2RP);
+        }
+        #endregion Methods
+        
+        #region Properties
+        public DbSet<E_Customer> E_Customers { get; set; }
+        public DbSet<E_Invoice> E_Invoices { get; set; }
+        public DbSet<E_prodDependeDeDois> E_prodDependeDeDoiss { get; set; }
+        public DbSet<E_metade1> E_metade1s { get; set; }
+        public DbSet<E_metade2> E_metade2s { get; set; }
+        public DbSet<E_Customer> E_Customers { get; set; }
+        public DbSet<E_Invoice> E_Invoices { get; set; }
+        public DbSet<E_prodDependeDeDois> E_prodDependeDeDoiss { get; set; }
+        public DbSet<E_metade1> E_metade1s { get; set; }
+        public DbSet<E_metade2> E_metade2s { get; set; }
+        #endregion Properties
+    }
+}

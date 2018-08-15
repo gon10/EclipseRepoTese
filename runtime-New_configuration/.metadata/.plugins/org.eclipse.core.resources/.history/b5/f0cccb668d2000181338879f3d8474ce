@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpenGameListWebApp.Data.E_Invoice
+
+{
+    public class E_Invoice
+    {
+        #region Constructor
+        public E_Invoice()
+        {
+
+        }
+        #endregion Constructor
+
+        #region Properties
+		[Key]
+		[Required]
+		public attribute.type ID { get; set; }
+		[Required]
+		public attribute.type CustomerID { get; set; }
+		[Required]
+		public attribute.type DateCreation { get; set; }
+		[Required]
+		public attribute.type DateApproval { get; set; }
+		[Required]
+		public attribute.type IsApproved { get; set; }
+		[Required]
+		public attribute.type TotalValueWithoutVAT { get; set; }
+		[Required]
+		public attribute.type TotalValueWithVAT { get; set; }
+		public String Description { get; set; }
+		#endregion Properties
+		
+		#region Related Properties
+		[ForeignKey("CustomerID")]
+		public virtual E_Customer CustomerIDRP { get; set; }
+		#endregion Related Properties
+	
+	}
+
+}

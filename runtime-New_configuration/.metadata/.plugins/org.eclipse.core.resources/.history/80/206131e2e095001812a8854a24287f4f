@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+
+				
+namespace OpenGameListWebApp.Data.E_VATs
+
+{
+    public class E_VAT
+    {
+        #region Constructor
+        public E_VAT()
+        {
+
+        }
+        #endregion Constructor
+
+        #region Properties
+		[Key]
+		[Required]
+		public int VATCode { get; set; }
+		[Required]
+		public String VATName { get; set; }
+		[Required]
+		public Decimal VATValue { get; set; }
+		public String Description { get; set; }
+		#endregion Properties
+		
+		#region Related Properties
+		
+		
+		#endregion Related Properties
+	
+	}
+
+}

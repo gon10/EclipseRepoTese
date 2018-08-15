@@ -1,0 +1,24 @@
+[2017-09-07 15:37:12] Executing startup tasks
+[2017-09-07 15:37:12] Java(TM) SE Runtime Environment 1.8.0_121-b13
+[2017-09-07 15:37:12] Product self.product.version
+[2017-09-07 15:37:12] Bundle org.eclipse.oomph.setup 1.7.0.v20170224-1311, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-09-07 15:37:12] Bundle org.eclipse.oomph.setup.core 1.7.0.v20170301-0747, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-09-07 15:37:12] Bundle org.eclipse.oomph.setup.p2 1.7.0.v20170217-1051, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-09-07 15:37:12] Performing Preference /instance/org.eclipse.ui.editors/lineNumberRuler = true
+[2017-09-07 15:37:13] 
+[2017-09-12 19:29:34] Executing startup tasks
+[2017-09-12 19:29:34] Java(TM) SE Runtime Environment 1.8.0_121-b13
+[2017-09-12 19:29:34] Product self.product.version
+[2017-09-12 19:29:34] Bundle org.eclipse.oomph.setup 1.7.0.v20170224-1311, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-09-12 19:29:34] Bundle org.eclipse.oomph.setup.core 1.7.0.v20170301-0747, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-09-12 19:29:34] Bundle org.eclipse.oomph.setup.p2 1.7.0.v20170217-1051, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-09-12 19:29:34] Performing Preference /instance/org.eclipse.ui.editors/lineNumberRuler = true
+[2017-09-12 19:29:34] 
+[2017-10-12 08:38:46] Executing startup tasks
+[2017-10-12 08:38:46] Java(TM) SE Runtime Environment 1.8.0_121-b13
+[2017-10-12 08:38:46] Product self.product.version
+[2017-10-12 08:38:46] Bundle org.eclipse.oomph.setup 1.7.0.v20170224-1311, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-10-12 08:38:46] Bundle org.eclipse.oomph.setup.core 1.7.0.v20170301-0747, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-10-12 08:38:46] Bundle org.eclipse.oomph.setup.p2 1.7.0.v20170217-1051, build=2932, branch=cc66c993507ade50e4b3a824a3adb4e94c4ac25f
+[2017-10-12 08:38:46] Performing Preference /instance/org.eclipse.ui.editors/lineNumberRuler = true
+[2017-10-12 08:38:47] 

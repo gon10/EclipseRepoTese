@@ -1,0 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+using OpenGameListWebApp.Data.E_Customers
+using OpenGameListWebApp.Data.E_Customer2s
+using OpenGameListWebApp.Data.E_Customer3s
+using OpenGameListWebApp.Data.E_Invoices
+using OpenGameListWebApp.Data.E_Invoice2s
+

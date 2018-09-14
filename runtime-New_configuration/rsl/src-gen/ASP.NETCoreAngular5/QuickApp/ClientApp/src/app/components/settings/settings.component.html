@@ -1,0 +1,130 @@
+<div class="container">
+  <header class="pageHeader">
+    <h3><i class="fa fa-cog fa-lg page-caption" aria-hidden="true"></i> {{'pageHeader.Settings' | translate}}</h3>
+  </header>
+
+  <div [@fadeInOut] class="row">
+    <div class="col-sm-2 side-menu">
+      <ul bootstrapTab #tab="bootstrap-tab" class="nav nav-tabs tabs-left" (showBSTab)="onShowTab($event)">
+        <li class="active">
+          <a id="profileTab" [routerLink]="[]" fragment="profile" href="#profile" data-toggle="tab"><i class="fa fa-user-circle-o fa-fw" aria-hidden="true"></i> {{'settings.tab.Profile' | translate}}</a>
+        </li>
+        <li>
+          <a id="preferencesTab" [routerLink]="[]" fragment="preferences" href="#preferences" data-toggle="tab"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i> {{'settings.tab.Preferences' | translate}}</a>
+        </li>
+        <li [hidden]="!canViewUsers">
+          <a id="usersTab" [routerLink]="[]" fragment="users" href="#users" data-toggle="tab"><i class="fa fa-users fa-fw" aria-hidden="true"></i> {{'settings.tab.Users' | translate}}</a>
+        </li>
+        <li [hidden]="!canViewRoles">
+          <a id="rolesTab" [routerLink]="[]" fragment="roles" href="#roles" data-toggle="tab"><i class="fa fa-shield fa-fw" aria-hidden="true"></i> {{'settings.tab.Roles' | translate}}</a>
+        </li>
+        <li [hidden]="!canViewE_VAT">
+          <a id="E_VATTab" [routerLink]="[]" fragment="E_VAT" href="#E_VAT" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> E_VAT</a>
+        </li>
+        <li [hidden]="!canViewE_Product">
+          <a id="E_ProductTab" [routerLink]="[]" fragment="E_Product" href="#E_Product" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> E_Product</a>
+        </li>
+        <li [hidden]="!canViewE_Customer">
+          <a id="E_CustomerTab" [routerLink]="[]" fragment="E_Customer" href="#E_Customer" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> E_Customer</a>
+        </li>
+        <li [hidden]="!canViewE_CustomerAdress">
+          <a id="E_CustomerAdressTab" [routerLink]="[]" fragment="E_CustomerAdress" href="#E_CustomerAdress" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> E_CustomerAdress</a>
+        </li>
+        <li [hidden]="!canViewE_CustomerVIP">
+          <a id="E_CustomerVIPTab" [routerLink]="[]" fragment="E_CustomerVIP" href="#E_CustomerVIP" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> E_CustomerVIP</a>
+        </li>
+        <li [hidden]="!canViewE_Invoice">
+          <a id="E_InvoiceTab" [routerLink]="[]" fragment="E_Invoice" href="#E_Invoice" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> E_Invoice</a>
+        </li>
+        <li [hidden]="!canViewE_InvoiceLine">
+          <a id="E_InvoiceLineTab" [routerLink]="[]" fragment="E_InvoiceLine" href="#E_InvoiceLine" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> E_InvoiceLine</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-10">
+      <div class="tab-content">
+        <div class="tab-pane active" id="profile">
+          <h4>{{'settings.header.UserProfile' | translate}}</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="isProfileActivated" class="content-container">
+            <user-info></user-info>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="preferences">
+          <h4>{{'settings.header.UserPreferences' | translate}}</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="isPreferencesActivated" class="content-container">
+            <user-preferences></user-preferences>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="users">
+          <h4>{{'settings.header.UsersManagements' | translate}}</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewUsers && isUsersActivated" class="content-container">
+            <users-management></users-management>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="roles">
+          <h4>{{'settings.header.RolesManagement' | translate}}</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewRoles && isRolesActivated" class="content-container">
+            <roles-management></roles-management>
+          </div>
+        </div>
+        
+        <div class="tab-pane" id="E_VAT">
+          <h4>E_VAT</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewE_VAT && isE_VATActivated" class="content-container">
+        	<e-vat-management></e-vat-management>
+          </div>
+        </div>
+        <div class="tab-pane" id="E_Product">
+          <h4>E_Product</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewE_Product && isE_ProductActivated" class="content-container">
+        	<e-product-management></e-product-management>
+          </div>
+        </div>
+        <div class="tab-pane" id="E_Customer">
+          <h4>E_Customer</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewE_Customer && isE_CustomerActivated" class="content-container">
+        	<e-customer-management></e-customer-management>
+          </div>
+        </div>
+        <div class="tab-pane" id="E_CustomerAdress">
+          <h4>E_CustomerAdress</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewE_CustomerAdress && isE_CustomerAdressActivated" class="content-container">
+        	<e-customeradress-management></e-customeradress-management>
+          </div>
+        </div>
+        <div class="tab-pane" id="E_CustomerVIP">
+          <h4>E_CustomerVIP</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewE_CustomerVIP && isE_CustomerVIPActivated" class="content-container">
+        	<e-customervip-management></e-customervip-management>
+          </div>
+        </div>
+        <div class="tab-pane" id="E_Invoice">
+          <h4>E_Invoice</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewE_Invoice && isE_InvoiceActivated" class="content-container">
+        	<e-invoice-management></e-invoice-management>
+          </div>
+        </div>
+        <div class="tab-pane" id="E_InvoiceLine">
+          <h4>E_InvoiceLine</h4>
+          <hr class="separator-hr" />
+          <div [@fadeInOut] *ngIf="canViewE_InvoiceLine && isE_InvoiceLineActivated" class="content-container">
+        	<e-invoiceline-management></e-invoiceline-management>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

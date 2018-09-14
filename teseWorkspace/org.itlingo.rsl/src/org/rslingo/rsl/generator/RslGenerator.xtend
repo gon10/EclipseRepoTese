@@ -89,13 +89,13 @@ class RslGenerator extends AbstractGenerator {
  			
  		for (e : resource.allContents.toIterable.filter(DataEntity)){
  				fsa.generateFile(	
- 				"ASP.NETCoreAngular2/DAL/Models/" + e.name + ".cs",
+ 				"ASP.NETCoreAngular5/DAL/Models/" + e.name + ".cs",
  				compileEntities(e, oneToOneOrZero1, oneToOneOrZero2, oneToMany1, oneToMany2))
  		}
  		
  		for (e : resource.allContents.toIterable.filter(DataEntity)){
  				fsa.generateFile(	
- 				"ASP.NETCoreAngular2/ViewModels/" + e.name + "ViewModel.cs",
+ 				"ASP.NETCoreAngular5/ViewModels/" + e.name + "ViewModel.cs",
  				compileViewModels(e, oneToOneOrZero1, oneToOneOrZero2, oneToMany1, oneToMany2))
  		}
  		
@@ -105,17 +105,48 @@ class RslGenerator extends AbstractGenerator {
  		}
  		
  		fsa.generateFile(	
- 		"ASP.NETCoreAngular2/DAL/Core/ApplicationPermissions.cs",
+ 		"ASP.NETCoreAngular5/DAL/Core/ApplicationPermissions.cs",
  		compileApplicationPermissions(useCases));  			
  				
  				
  		fsa.generateFile(
- 		"ASP.NETCoreAngular2/DAL/ApplicationDbContext" + ".cs",
+ 		"ASP.NETCoreAngular5/DAL/ApplicationDbContext" + ".cs",
  		compileAppDb(entities, oneToOneOrZero1, oneToOneOrZero2, oneToMany1, oneToMany2))
  		
  		fsa.generateFile(
- 		"ASP.NETCoreAngular2/DAL/DatabaseInitializer.cs",
+ 		"ASP.NETCoreAngular5/DAL/DatabaseInitializer.cs",
  		compileDatabaseInitializer(useCases));
+ 		
+ 		fsa.generateFile(
+ 		"ASP.NETCoreAngular5/QuickApp/ClientApp/src/app/components/settings/settings.component.html",
+ 		compileSettingsComponentHTML(entities));
+ 		
+ 		fsa.generateFile(
+ 		"ASP.NETCoreAngular5/QuickApp/ClientApp/src/app/components/settings/settings.component.ts",
+ 		compileSettingsComponenTS(entities));
+ 		
+ 		for (e : resource.allContents.toIterable.filter(DataEntity)){
+ 				fsa.generateFile(	
+ 				"ASP.NETCoreAngular5/QuickApp/ClientApp/src/app/components/controls/" + e.name.replace("_", "-").toLowerCase + "-management.component.ts",
+ 				compileComponentsControlsTS(e))
+ 		}
+ 		
+ 		for (e : resource.allContents.toIterable.filter(DataEntity)){
+ 				fsa.generateFile(	
+ 				"ASP.NETCoreAngular5/QuickApp/ClientApp/src/app/components/controls/" + e.name.replace("_", "-").toLowerCase + "-management.component.html",
+ 				compileComponentsControlsHTML(e))
+ 		}
+ 		
+ 		for (e : resource.allContents.toIterable.filter(DataEntity)){
+ 				fsa.generateFile(	
+ 				"ASP.NETCoreAngular5/QuickApp/ClientApp/src/app/components/controls/" + e.name.replace("_", "-").toLowerCase + "-management.component.css",
+ 				compileComponentsControlsCSS(e))
+ 		}
+ 		
+ 		fsa.generateFile(
+ 		"ASP.NETCoreAngular5/QuickApp/ClientApp/src/app/app.module.ts",
+ 		compileAppModule(entities));
+ 		
  				
  				
  		oneToMany1.clear;
@@ -124,6 +155,496 @@ class RslGenerator extends AbstractGenerator {
 		oneToOneOrZero2.clear;
 		ManyToMany1.clear;
 		ManyToMany2.clear;
+	}
+	
+	def compileAppModule(ArrayList<DataEntity> entities) {
+		'''
+		// ====================================================
+		// More Templates: https://www.ebenmonney.com/templates
+		// Email: support@ebenmonney.com
+		// ====================================================
+		
+		import { NgModule, ErrorHandler } from "@angular/core";
+		import { RouterModule } from "@angular/router";
+		import { FormsModule } from "@angular/forms";
+		import { BrowserModule } from '@angular/platform-browser';
+		import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+		import { HttpClientModule } from '@angular/common/http';
+		
+		import { TranslateModule, TranslateLoader } from "@ngx-translate/core";
+		import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+		import { ToastaModule } from 'ngx-toasta';
+		import { ModalModule } from 'ngx-bootstrap/modal';
+		import { TooltipModule } from "ngx-bootstrap/tooltip";
+		import { PopoverModule } from "ngx-bootstrap/popover";
+		import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+		import { CarouselModule } from 'ngx-bootstrap/carousel';
+		import { ChartsModule } from 'ng2-charts';
+		
+		import { AppRoutingModule } from './app-routing.module';
+		import { AppErrorHandler } from './app-error.handler';
+		import { AppTitleService } from './services/app-title.service';
+		import { AppTranslationService, TranslateLanguageLoader } from './services/app-translation.service';
+		import { ConfigurationService } from './services/configuration.service';
+		import { AlertService } from './services/alert.service';
+		import { LocalStoreManager } from './services/local-store-manager.service';
+		import { EndpointFactory } from './services/endpoint-factory.service';
+		import { NotificationService } from './services/notification.service';
+		import { NotificationEndpoint } from './services/notification-endpoint.service';
+		import { AccountService } from './services/account.service';
+		import { AccountEndpoint } from './services/account-endpoint.service';
+		
+		import { EqualValidator } from './directives/equal-validator.directive';
+		import { LastElementDirective } from './directives/last-element.directive';
+		import { AutofocusDirective } from './directives/autofocus.directive';
+		import { BootstrapTabDirective } from './directives/bootstrap-tab.directive';
+		import { BootstrapToggleDirective } from './directives/bootstrap-toggle.directive';
+		import { BootstrapSelectDirective } from './directives/bootstrap-select.directive';
+		import { BootstrapDatepickerDirective } from './directives/bootstrap-datepicker.directive';
+		import { GroupByPipe } from './pipes/group-by.pipe';
+		
+		import { AppComponent } from "./components/app.component";
+		import { LoginComponent } from "./components/login/login.component";
+		import { HomeComponent } from "./components/home/home.component";
+		import { CustomersComponent } from "./components/customers/customers.component";
+		import { ProductsComponent } from "./components/products/products.component";
+		import { OrdersComponent } from "./components/orders/orders.component";
+		import { SettingsComponent } from "./components/settings/settings.component";
+		import { AboutComponent } from "./components/about/about.component";
+		import { NotFoundComponent } from "./components/not-found/not-found.component";
+		
+		import { BannerDemoComponent } from "./components/controls/banner-demo.component";
+		import { TodoDemoComponent } from "./components/controls/todo-demo.component";
+		import { StatisticsDemoComponent } from "./components/controls/statistics-demo.component";
+		import { NotificationsViewerComponent } from "./components/controls/notifications-viewer.component";
+		import { SearchBoxComponent } from "./components/controls/search-box.component";
+		import { UserInfoComponent } from "./components/controls/user-info.component";
+		import { UserPreferencesComponent } from "./components/controls/user-preferences.component";
+		import { UsersManagementComponent } from "./components/controls/users-management.component";
+		import { RolesManagementComponent } from "./components/controls/roles-management.component";
+		import { RoleEditorComponent } from "./components/controls/role-editor.component";
+		
+		//feito por mim
+		«FOR entity : entities»import { «entity.name.replace("_", "")»ManagementComponent } from "./components/controls/«entity.name.replace("_", "-").toLowerCase»-management.component";«ENDFOR»
+		
+		
+		
+		
+		@NgModule({
+		  imports: [
+		    BrowserModule,
+		    BrowserAnimationsModule,
+		    HttpClientModule,
+		    FormsModule,
+		    AppRoutingModule,
+		    TranslateModule.forRoot({
+		      loader: {
+		        provide: TranslateLoader,
+		        useClass: TranslateLanguageLoader
+		      }
+		    }),
+		    NgxDatatableModule,
+		    ToastaModule.forRoot(),
+		    TooltipModule.forRoot(),
+		    PopoverModule.forRoot(),
+		    BsDropdownModule.forRoot(),
+		    CarouselModule.forRoot(),
+		    ModalModule.forRoot(),
+		    ChartsModule
+		  ],
+		  declarations: [
+		    AppComponent,
+		    LoginComponent,
+		    HomeComponent,
+		    CustomersComponent,
+		    ProductsComponent,
+		    OrdersComponent,
+		    SettingsComponent,
+		    UsersManagementComponent, UserInfoComponent, UserPreferencesComponent, «FOR entity : entities»«entity.name.replace("_", "")»ManagementComponent,«ENDFOR»
+		    RolesManagementComponent, RoleEditorComponent,
+		    AboutComponent,
+		    NotFoundComponent,
+		    NotificationsViewerComponent,
+		    SearchBoxComponent,
+		    StatisticsDemoComponent, TodoDemoComponent, BannerDemoComponent,
+		    EqualValidator,
+		    LastElementDirective,
+		    AutofocusDirective,
+		    BootstrapTabDirective,
+		    BootstrapToggleDirective,
+		    BootstrapSelectDirective,
+		    BootstrapDatepickerDirective,
+		    GroupByPipe
+		  ],
+		  providers: [
+		    { provide: 'BASE_URL', useFactory: getBaseUrl },
+		    { provide: ErrorHandler, useClass: AppErrorHandler },
+		    AlertService,
+		    ConfigurationService,
+		    AppTitleService,
+		    AppTranslationService,
+		    NotificationService,
+		    NotificationEndpoint,
+		    AccountService,
+		    AccountEndpoint,
+		    LocalStoreManager,
+		    EndpointFactory
+		  ],
+		  bootstrap: [AppComponent]
+		})
+		export class AppModule {
+		}
+		
+		
+		
+		
+		export function getBaseUrl() {
+		  return document.getElementsByTagName('base')[0].href;
+		}
+		
+		'''
+	}
+	
+	def compileComponentsControlsCSS(DataEntity entity) {
+		'''
+		.user-role {
+		    font-size: 0.8em !important;
+		    margin-right: 1px;
+		}
+		
+		.control-box {
+		    margin-bottom: 5px;
+		}
+		
+		.search-box {
+		    margin: 0;
+		}
+		
+		.action-box {
+		    margin: 0 50px 0 0;
+		    min-height: 0;
+		}
+		
+		    .action-box .toolbaritem a {
+		        padding-top: 5px;
+		        padding-bottom: 5px;
+		        min-width: 100px;
+		    }
+		
+		
+		.user-disabled {
+		    color: #777;
+		    font-style: italic;
+		}
+		
+		
+		.locked-out {
+		    background-color: orangered;
+		    color: whitesmoke;
+		    width: 100%;
+		    display: inline-block;
+		    padding-left: 5px;
+		}
+		
+		
+		@media (max-width: 768px) {
+		    .action-box {
+		        margin: 0 14px;
+		    }
+		}
+		'''
+	}
+	
+	def compileComponentsControlsHTML(DataEntity entity) {
+		'''
+		<div>
+		    <div class="row control-box">
+		        <div class="col-sm-8">
+		            <div class="form-group search-box">
+		                <search-box (searchChange)="onSearchChanged($event)" placeholder="«entity.name»">></search-box>
+		            </div>
+		        </div>
+		        <div class="col-sm-4">
+		            <div class="navbar action-box">
+		                <ul class="nav navbar-nav navbar-right">
+		                    <li *ngIf="canManageUsers && canAssignRoles" class="toolbaritem">
+		                        <a href="javascript:;" (click)="newUser(row)">
+		                            <i class="fa fa-plus-circle"></i> New «entity.name»
+		                        </a>
+		                    </li>
+		                </ul>
+		            </div>
+		        </div>
+		    </div>
+		
+		    <ngx-datatable class="material colored-header sm table table-striped table-hover"
+		                   [loadingIndicator]="loadingIndicator"
+		                   [rows]="rows"
+		                   [rowHeight]="35"
+		                   [headerHeight]="35"
+		                   [footerHeight]="35"
+		                   [columns]="columns"
+		                   [scrollbarV]="true"
+		                   [columnMode]="'force'">
+		    </ngx-datatable>
+		
+		</div>
+		'''
+	}
+	
+	def compileComponentsControlsTS(DataEntity entity) {
+		'''
+		// ====================================================
+		// More Templates: https://www.ebenmonney.com/templates
+		// Email: support@ebenmonney.com
+		// ====================================================
+		
+		import { Component, OnInit, AfterViewInit, TemplateRef, ViewChild, Input } from '@angular/core';
+		import { ModalDirective } from 'ngx-bootstrap/modal';
+		
+		import { AlertService, DialogType, MessageSeverity } from '../../services/alert.service';
+		import { AppTranslationService } from "../../services/app-translation.service";
+		import { AccountService } from "../../services/account.service";
+		import { Utilities } from "../../services/utilities";
+		import { User } from '../../models/user.model';
+		import { Role } from '../../models/role.model';
+		import { Permission } from '../../models/permission.model';
+		import { UserEdit } from '../../models/user-edit.model';
+		import { UserInfoComponent } from "./user-info.component";
+		
+		
+		@Component({
+		    selector: '«entity.name.replace("_", "-").toLowerCase»-management',
+		    templateUrl: './«entity.name.replace("_", "-").toLowerCase»-management.component.html',
+		    styleUrls: ['./«entity.name.replace("_", "-").toLowerCase»-management.component.css']
+		})
+		export class «entity.name.replace("_", "")»ManagementComponent implements OnInit{
+		    columns: any[] = [];
+		    rows: any[] = [];
+		
+		    loadingIndicator: boolean;
+		
+		    
+		
+		    constructor(private alertService: AlertService, private translationService: AppTranslationService, private accountService: AccountService) {
+		    }
+		
+		
+		    ngOnInit() {
+		
+		        let gT = (key: string) => this.translationService.getTranslation(key);
+		
+		        this.columns = [
+		        	«FOR atributo : entity.attributes»
+		        	«IF atributo == entity.attributes.last && entity.description == null»
+		        	{ prop: '«atributo.name»', name: '«atributo.name»'}
+		        	«ELSE»
+		        	{ prop: "«atributo.name»", name: '«atributo.name»'},		        	
+		        	«ENDIF»		        	
+		        	«ENDFOR»
+		        	«IF entity.description != null»
+		        	{ prop: 'Description', name: 'Description'}
+		        	«ENDIF»
+		      ];
+		
+		    }
+		}
+		'''
+	}
+	
+	
+	def compileSettingsComponenTS(ArrayList<DataEntity> entities) {
+		'''
+		// ====================================================
+		// More Templates: https://www.ebenmonney.com/templates
+		// Email: support@ebenmonney.com
+		// ====================================================
+		
+		import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+		import { ActivatedRoute } from '@angular/router';
+		
+		
+		import { fadeInOut } from '../../services/animations';
+		import { BootstrapTabDirective } from "../../directives/bootstrap-tab.directive";
+		import { AccountService } from "../../services/account.service";
+		import { Permission } from '../../models/permission.model';
+		
+		
+		@Component({
+		  selector: 'settings',
+		  templateUrl: './settings.component.html',
+		  styleUrls: ['./settings.component.css'],
+		  animations: [fadeInOut]
+		})
+		export class SettingsComponent implements OnInit, OnDestroy {
+		
+		  isProfileActivated = true;
+		  isPreferencesActivated = false;
+		  isUsersActivated = false;
+		  isRolesActivated = false;
+		  «FOR entity : entities»
+		  is«entity.name»Activated = false;
+		  «ENDFOR»
+		
+		  fragmentSubscription: any;
+		
+		  readonly profileTab = "profile";
+		  readonly preferencesTab = "preferences";
+		  readonly usersTab = "users";
+		  readonly rolesTab = "roles";
+		  «FOR entity : entities»
+		  readonly «entity.name»Tab = '«entity.name»';
+		  «ENDFOR»
+		
+		  @ViewChild("tab")
+		  tab: BootstrapTabDirective;
+		
+		
+		  constructor(private route: ActivatedRoute, private accountService: AccountService) {
+		  }
+		
+		
+		  ngOnInit() {
+		    this.fragmentSubscription = this.route.fragment.subscribe(anchor => this.showContent(anchor));
+		  }
+		
+		
+		  ngOnDestroy() {
+		    this.fragmentSubscription.unsubscribe();
+		  }
+		
+		  showContent(anchor: string) {
+		    if ((this.isFragmentEquals(anchor, this.usersTab) && !this.canViewUsers) ||
+		      (this.isFragmentEquals(anchor, this.rolesTab) && !this.canViewRoles)
+		      «FOR entity : entities»
+		      || (this.isFragmentEquals(anchor, this.«entity.name»Tab) && !this.canView«entity.name»)
+		      «ENDFOR»
+			) {
+		      return;
+			}
+		    this.tab.show(`#${anchor || this.profileTab}Tab`);
+		  }
+		
+		
+		  isFragmentEquals(fragment1: string, fragment2: string) {
+		
+		    if (fragment1 == null)
+		      fragment1 = "";
+		
+		    if (fragment2 == null)
+		      fragment2 = "";
+		
+		    return fragment1.toLowerCase() == fragment2.toLowerCase();
+		  }
+		
+		
+		  onShowTab(event) {
+		    let activeTab = event.target.hash.split("#", 2).pop();
+		
+		    this.isProfileActivated = activeTab == this.profileTab;
+		    this.isPreferencesActivated = activeTab == this.preferencesTab;
+		    this.isUsersActivated = activeTab == this.usersTab;
+		    this.isRolesActivated = activeTab == this.rolesTab;
+			«FOR entity : entities»
+			this.is«entity.name»Activated = activeTab == this.«entity.name»Tab;
+			«ENDFOR»
+		  }
+		
+		
+		  get canViewUsers() {
+		    return this.accountService.userHasPermission(Permission.viewUsersPermission);
+		  }
+		
+		  get canViewRoles() {
+		    return this.accountService.userHasPermission(Permission.viewRolesPermission);
+		  }
+«««		  TODO meter o accoutService
+		  «FOR entity : entities»
+		  get canView«entity.name»() {
+		  		    return true;
+		  		  }
+		  «ENDFOR»
+		}
+		'''
+	}
+	
+	def compileSettingsComponentHTML(ArrayList<DataEntity> entities) {
+		'''
+		<div class="container">
+		  <header class="pageHeader">
+		    <h3><i class="fa fa-cog fa-lg page-caption" aria-hidden="true"></i> {{'pageHeader.Settings' | translate}}</h3>
+		  </header>
+		
+		  <div [@fadeInOut] class="row">
+		    <div class="col-sm-2 side-menu">
+		      <ul bootstrapTab #tab="bootstrap-tab" class="nav nav-tabs tabs-left" (showBSTab)="onShowTab($event)">
+		        <li class="active">
+		          <a id="profileTab" [routerLink]="[]" fragment="profile" href="#profile" data-toggle="tab"><i class="fa fa-user-circle-o fa-fw" aria-hidden="true"></i> {{'settings.tab.Profile' | translate}}</a>
+		        </li>
+		        <li>
+		          <a id="preferencesTab" [routerLink]="[]" fragment="preferences" href="#preferences" data-toggle="tab"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i> {{'settings.tab.Preferences' | translate}}</a>
+		        </li>
+		        <li [hidden]="!canViewUsers">
+		          <a id="usersTab" [routerLink]="[]" fragment="users" href="#users" data-toggle="tab"><i class="fa fa-users fa-fw" aria-hidden="true"></i> {{'settings.tab.Users' | translate}}</a>
+		        </li>
+		        <li [hidden]="!canViewRoles">
+		          <a id="rolesTab" [routerLink]="[]" fragment="roles" href="#roles" data-toggle="tab"><i class="fa fa-shield fa-fw" aria-hidden="true"></i> {{'settings.tab.Roles' | translate}}</a>
+		        </li>
+		        «FOR entity : entities»
+		        <li [hidden]="!canView«entity.name»">
+		          <a id="«entity.name»Tab" [routerLink]="[]" fragment="«entity.name»" href="#«entity.name»" data-toggle="tab"><i class="fa fa-file-code-o fa-fw" aria-hidden="true"></i> «entity.name»</a>
+		        </li>
+		        «ENDFOR»
+		      </ul>
+		    </div>
+		    <div class="col-sm-10">
+		      <div class="tab-content">
+		        <div class="tab-pane active" id="profile">
+		          <h4>{{'settings.header.UserProfile' | translate}}</h4>
+		          <hr class="separator-hr" />
+		          <div [@fadeInOut] *ngIf="isProfileActivated" class="content-container">
+		            <user-info></user-info>
+		          </div>
+		        </div>
+		
+		        <div class="tab-pane" id="preferences">
+		          <h4>{{'settings.header.UserPreferences' | translate}}</h4>
+		          <hr class="separator-hr" />
+		          <div [@fadeInOut] *ngIf="isPreferencesActivated" class="content-container">
+		            <user-preferences></user-preferences>
+		          </div>
+		        </div>
+		
+		        <div class="tab-pane" id="users">
+		          <h4>{{'settings.header.UsersManagements' | translate}}</h4>
+		          <hr class="separator-hr" />
+		          <div [@fadeInOut] *ngIf="canViewUsers && isUsersActivated" class="content-container">
+		            <users-management></users-management>
+		          </div>
+		        </div>
+		
+		        <div class="tab-pane" id="roles">
+		          <h4>{{'settings.header.RolesManagement' | translate}}</h4>
+		          <hr class="separator-hr" />
+		          <div [@fadeInOut] *ngIf="canViewRoles && isRolesActivated" class="content-container">
+		            <roles-management></roles-management>
+		          </div>
+		        </div>
+		        
+		        «FOR entity : entities»
+		        <div class="tab-pane" id="«entity.name»">
+		          <h4>«entity.name»</h4>
+		          <hr class="separator-hr" />
+		          <div [@fadeInOut] *ngIf="canView«entity.name» && is«entity.name»Activated" class="content-container">
+		        	<«entity.name.replace("_", "-").toLowerCase»-management></«entity.name.replace("_", "-").toLowerCase»-management>
+		          </div>
+		        </div>
+		        «ENDFOR»
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		'''
 	}
 	
 	def compileDatabaseInitializer(ArrayList<UseCase> cases) {
@@ -225,6 +746,16 @@ class RslGenerator extends AbstractGenerator {
 		
 		                await CreateUserAsync("admin", "tempP@ss123", "Inbuilt Administrator", "admin@ebenmonney.com", "+1 (123) 000-0000", new string[] { adminRoleName });
 		                await CreateUserAsync("user", "tempP@ss123", "Inbuilt Standard User", "user@ebenmonney.com", "+1 (123) 000-0001", new string[] { userRoleName });
+		
+						//________feito por mim
+						«var actorsForCreateUserAsync = new ArrayList<String>»
+						«FOR uc : useCases»
+						«IF !actorsForCreateUserAsync.contains(uc.actorInitiates.name)»
+						await CreateUserAsync("«uc.actorInitiates.name»", "tempP@ss123", "Inbuilt «uc.actorInitiates.name»", "«uc.actorInitiates.name»@ebenmonney.com", "012345", new string[] { «uc.actorInitiates.name»RoleName });
+						«{actorsForCreateUserAsync.add(uc.actorInitiates.name); ""}»
+						«ENDIF»
+						«ENDFOR»
+						//________
 		
 		                _logger.LogInformation("Inbuilt account generation completed");
 		            }
@@ -589,7 +1120,7 @@ class RslGenerator extends AbstractGenerator {
 		namespace DAL.Models
 		
 		{
-			public class «entity.name» : AuditableEntity
+			public class «entity.name»
 			{
 «««		        #region Constructor
 				public «entity.name»()

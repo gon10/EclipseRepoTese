@@ -56,7 +56,7 @@ dataEntity E_Customer : Principal [
 	primaryKey (ID)
 	foreignKey E_Customer(CustomerId)
 	check CK_CustomerId "Unique(CustomerId)"
-	description "Customers" 
+	description "Customersad" 
     ]
 
 dataEntity E_CustomerVIP : Principal [
